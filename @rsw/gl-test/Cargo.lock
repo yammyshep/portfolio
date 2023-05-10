@@ -15,18 +15,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "fixedbitset"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
-
-[[package]]
-name = "game-of-life"
+name = "gl-test"
 version = "0.1.0"
 dependencies = [
- "fixedbitset",
  "js-sys",
  "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -141,3 +135,13 @@ name = "wasm-bindgen-shared"
 version = "0.2.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a901d592cafaa4d711bc324edfaff879ac700b19c3dfd60058d2b445be2691eb"
+
+[[package]]
+name = "web-sys"
+version = "0.3.62"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16b5f940c7edfdc6d12126d98c9ef4d1b3d470011c47c76a6581df47ad9ba721"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+]

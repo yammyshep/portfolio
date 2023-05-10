@@ -30,5 +30,5 @@ dir = "my-template"
 #! ################# NPM Package #################
 
 [[crates]]
-name = "@rsw/game-of-life"
+name = "@rsw/gl-test"
 link = true

@@ -1,5 +1,3 @@
-import init, { greet, thing } from '@rsw/game-of-life';
+import init from '@rsw/gl-test'
 
 await init();
-console.log(thing());
-greet("Someone!");
