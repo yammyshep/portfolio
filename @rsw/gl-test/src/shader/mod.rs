@@ -5,6 +5,7 @@ use web_sys::*;
 
 pub struct Shader {
     pub program: WebGlProgram,
+    gl: WebGlRenderingContext,
     uniforms: RefCell<HashMap<String, WebGlUniformLocation>>,
 }
 
@@ -21,28 +22,30 @@ impl Shader {
 
         let uniforms = RefCell::new(HashMap::new());
 
-        Ok(Shader { program, uniforms })
+        Ok(Shader { program, gl: gl.clone(), uniforms })
     }
 
     /// Get the location of a uniform.
     /// If this is our first time retrieving it we will cache it so that for future retrievals
     /// we won't need to query the shader program.
-    pub fn get_uniform_location(
-        &self,
-        gl: &WebGlRenderingContext,
-        uniform_name: &str,
-    ) -> Option<WebGlUniformLocation> {
+    pub fn get_uniform_location(&self, uniform_name: &str) -> Option<WebGlUniformLocation> {
         let mut uniforms = self.uniforms.borrow_mut();
 
         if uniforms.get(uniform_name).is_none() {
             uniforms.insert(
                 uniform_name.to_string(),
-                gl.get_uniform_location(&self.program, uniform_name)
+                self.gl.get_uniform_location(&self.program, uniform_name)
                     .expect(&format!(r#"Uniform '{}' not found"#, uniform_name)),
             );
         }
 
         Some(uniforms.get(uniform_name).expect("loc").clone())
+    }
+
+    pub fn set_uniform_1f(&self, name: &str, x: f32) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).expect("Uniform location found");
+        self.gl.uniform1f(Some(&location), x);
+        Ok(())
     }
 }
 

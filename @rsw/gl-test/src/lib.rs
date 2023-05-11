@@ -15,17 +15,21 @@ extern "C" {
     fn log(s: &str);
 }
 
+macro_rules! console_log { ($($t:tt)*) => (log(&format_args!($($t)*).to_string())) }
+
+const VERTS: [f32; 9] = [-0.7, -0.7, 0.0, 0.7, -0.7, 0.0, 0.0, 0.7, 0.0];
+
 #[wasm_bindgen]
-pub struct WebClient {}
+pub struct WebClient {
+    ctx: WebGlRenderingContext,
+    rot: f32,
+    program: Option<Shader>,
+}
 
 #[wasm_bindgen]
 impl WebClient {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> WebClient {
-       WebClient {}
-    }
-
-    pub fn start() -> Result<(), JsValue> {
+    pub fn new() -> Result<WebClient, JsValue> {
         let document = web_sys::window().unwrap().document().unwrap();
         let canvas = document.get_element_by_id("canvas").unwrap();
         let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
@@ -40,11 +44,15 @@ impl WebClient {
     
         let program = Shader::new(&context, vert_str, frag_str).expect("Failed to compile shader program");
         context.use_program(Some(&program.program));
+
+        Ok(WebClient { ctx: context, rot: 0.0, program: Some(program) })
+    }
+
+    pub fn start(&self) -> Result<(), JsValue> {
+        console_log!("Starting!");
     
-        let vertices: [f32; 9] = [-0.7, -0.7, 0.0, 0.7, -0.7, 0.0, 0.0, 0.7, 0.0];
-    
-        let buffer = context.create_buffer().ok_or("failed to create buffer")?;
-        context.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&buffer));
+        let buffer = self.ctx.create_buffer().ok_or("failed to create buffer")?;
+        self.ctx.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&buffer));
     
         // Note that `Float32Array::view` is somewhat dangerous (hence the
         // `unsafe`!). This is creating a raw view into our module's
@@ -55,38 +63,38 @@ impl WebClient {
         // As a result, after `Float32Array::view` we have to be very careful not to
         // do any memory allocations before it's dropped.
         unsafe {
-            let vert_array = js_sys::Float32Array::view(&vertices);
+            let vert_array = js_sys::Float32Array::view(&VERTS);
     
-            context.buffer_data_with_array_buffer_view(
+            self.ctx.buffer_data_with_array_buffer_view(
                 WebGlRenderingContext::ARRAY_BUFFER,
                 &vert_array,
                 WebGlRenderingContext::STATIC_DRAW,
             );
         }
     
-        context.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
-        context.enable_vertex_attrib_array(0);
-    
-        context.clear_color(0.0, 0.0, 0.0, 1.0);
-        context.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
-    
-        context.draw_arrays(
-            WebGlRenderingContext::TRIANGLES,
-            0,
-            (vertices.len() / 3) as i32,
-        );
+        self.ctx.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
+        self.ctx.enable_vertex_attrib_array(0);
         Ok(())
     }
 
-    pub fn update(dt: f32) {
-
+    pub fn update(&mut self, dt: f32) {
+        self.rot += dt / 500.0;
     }
 
-    pub fn render() {
+    pub fn render(&self) {
+        self.ctx.clear_color(0.0, 0.0, 0.0, 1.0);
+        self.ctx.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
 
+        self.program.as_ref().unwrap().set_uniform_1f("rotation", self.rot);
+    
+        self.ctx.draw_arrays(
+            WebGlRenderingContext::TRIANGLES,
+            0,
+            (VERTS.len() / 3) as i32,
+        );
     }
 
-    pub fn exit() {
+    pub fn exit(&self) {
         
     }
 }

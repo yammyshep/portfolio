@@ -1,7 +1,7 @@
 import init, { WebClient } from '@rsw/gl-test'
 
 await init();
-let client = new WebClient().constructor;
+let client = new WebClient();
 client.start();
 
 let time = Date.now();
