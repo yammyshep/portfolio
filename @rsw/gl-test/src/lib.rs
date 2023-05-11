@@ -1,8 +1,11 @@
+#![allow(dead_code)]
+
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGlRenderingContext;
 
 mod util;
+mod shader;
 
 #[wasm_bindgen(start)]
 pub fn start() -> Result<(), JsValue> {
@@ -15,27 +18,21 @@ pub fn start() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<WebGlRenderingContext>()?;
 
-    let vert_shader = util::compile_shader(
-        &context,
-        WebGlRenderingContext::VERTEX_SHADER,
-        r#"
-        attribute vec4 position;
-        void main() {
-            gl_Position = position;
-        }
-    "#,
-    )?;
-    let frag_shader = util::compile_shader(
-        &context,
-        WebGlRenderingContext::FRAGMENT_SHADER,
-        r#"
-        void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        }
-    "#,
-    )?;
-    let program = util::link_program(&context, &vert_shader, &frag_shader)?;
-    context.use_program(Some(&program));
+    let vert_str = r#"
+    attribute vec4 position;
+    void main() {
+        gl_Position = position;
+    }
+    "#;
+
+    let frag_str = r#"
+    void main() {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+    "#;
+
+    let program = shader::Shader::new(&context, vert_str, frag_str).expect("Failed to compile shader program");
+    context.use_program(Some(&program.program));
 
     let vertices: [f32; 9] = [-0.7, -0.7, 0.0, 0.7, -0.7, 0.0, 0.0, 0.7, 0.0];
 
