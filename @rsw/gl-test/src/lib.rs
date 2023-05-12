@@ -92,7 +92,7 @@ impl WebClient {
         self.ctx.clear_color(0.0, 0.0, 0.0, 1.0);
         self.ctx.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
 
-        self.program.as_ref().unwrap().set_uniform_1f("rotation", self.rot);
+        self.program.as_ref().unwrap().set_uniform1f("rotation", self.rot);
     
         self.ctx.draw_arrays(
             WebGlRenderingContext::TRIANGLES,
