@@ -8,7 +8,7 @@ let time = Date.now();
 function render() {
     const dt = Date.now() - time;
 
-    client.update(dt);
+    client.update(dt * 0.001);
     client.render();
 
     window.requestAnimationFrame(render);

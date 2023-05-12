@@ -17,7 +17,14 @@ extern "C" {
 
 macro_rules! console_log { ($($t:tt)*) => (log(&format_args!($($t)*).to_string())) }
 
-const VERTS: [f32; 9] = [-0.7, -0.7, 0.0, 0.7, -0.7, 0.0, 0.0, 0.7, 0.0];
+const VERTS: [f32; 18] = [
+    -0.7, -0.7, 0.0,
+    0.7, -0.7, 0.0,
+    0.0, 0.0, 0.0,
+    -0.7, 0.7, 0.0,
+    0.0, 0.0, 0.0,
+    0.7, 0.7, 0.0,
+];
 
 #[wasm_bindgen]
 pub struct WebClient {
@@ -78,7 +85,7 @@ impl WebClient {
     }
 
     pub fn update(&mut self, dt: f32) {
-        self.rot += dt / 500.0;
+        self.rot += dt / 5.0;
     }
 
     pub fn render(&self) {
