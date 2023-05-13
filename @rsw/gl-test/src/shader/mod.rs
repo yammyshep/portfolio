@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 use web_sys::*;
+use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
 
 pub const SHADER_SIMPLE_VERT: &str = include_str!("./simple.v.glsl");
 pub const SHADER_SIMPLE_FRAG: &str = include_str!("./simple.f.glsl");
@@ -45,9 +46,49 @@ impl Shader {
         Some(uniforms.get(uniform_name).expect("loc").clone())
     }
 
-    pub fn set_uniform_1f(&self, name: &str, x: f32) -> Result<(), ()> {
-        let location = self.get_uniform_location(name).expect("Uniform location found");
+    pub fn set_uniform1f(&self, name: &str, x: f32) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
         self.gl.uniform1f(Some(&location), x);
+        Ok(())
+    }
+
+    pub fn set_uniform1f_vec(&self, name: &str, val: Vector1<f32>) -> Result<(), ()> {
+        self.set_uniform1f(name, val[0])
+    }
+
+    pub fn set_uniform2f(&self, name: &str, val: Vector2<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform2fv_with_f32_array(Some(&location), val.as_slice());
+        Ok(())
+    }
+
+    pub fn set_uniform3f(&self, name: &str, val: Vector3<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform3fv_with_f32_array(Some(&location), val.as_slice());
+        Ok(())
+    }
+
+    pub fn set_uniform4f(&self, name: &str, val: Vector4<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform4fv_with_f32_array(Some(&location), val.as_slice());
+        Ok(())
+    }
+
+    pub fn set_uniform_matrix2f(&self, name: &str, val: Matrix2<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform_matrix2fv_with_f32_array(Some(&location), false, val.as_slice());
+        Ok(())
+    }
+    
+    pub fn set_uniform_matrix3f(&self, name: &str, val: Matrix3<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform_matrix3fv_with_f32_array(Some(&location), false, val.as_slice());
+        Ok(())
+    }
+    
+    pub fn set_uniform_matrix4f(&self, name: &str, val: Matrix4<f32>) -> Result<(), ()> {
+        let location = self.get_uniform_location(name).ok_or(())?;
+        self.gl.uniform_matrix4fv_with_f32_array(Some(&location), false, val.as_slice());
         Ok(())
     }
 }
