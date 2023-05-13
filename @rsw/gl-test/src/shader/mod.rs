@@ -3,6 +3,9 @@ use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 use web_sys::*;
 
+pub const SHADER_SIMPLE_VERT: &str = include_str!("./simple.v.glsl");
+pub const SHADER_SIMPLE_FRAG: &str = include_str!("./simple.f.glsl");
+
 pub struct Shader {
     pub program: WebGlProgram,
     gl: WebGlRenderingContext,

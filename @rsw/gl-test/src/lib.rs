@@ -8,6 +8,7 @@ mod util;
 mod shader;
 
 use shader::Shader;
+use shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT};
 
 #[wasm_bindgen]
 extern "C" {
@@ -46,10 +47,7 @@ impl WebClient {
             .unwrap()
             .dyn_into::<WebGlRenderingContext>()?;
     
-        let vert_str = include_str!("./shader/simple.vert");
-        let frag_str = include_str!("./shader/simple.frag");
-    
-        let program = Shader::new(&context, vert_str, frag_str).expect("Failed to compile shader program");
+        let program = Shader::new(&context, SHADER_SIMPLE_VERT, SHADER_SIMPLE_FRAG).expect("Failed to compile shader program");
         context.use_program(Some(&program.program));
 
         Ok(WebClient { ctx: context, rot: 0.0, program: Some(program) })
