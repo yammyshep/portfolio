@@ -1,10 +1,8 @@
-trait Application {
-    pub fn start(&self) -> Result<(), ()>;
-    pub fn update(&self, dt: f32);
-    pub fn render(&self);
-    pub fn exit(&self);
-}
+use web_sys::WebGlRenderingContext;
 
-trait WebClient {
-    pub fn init(&Self) -> Result<(), ()>;
+pub trait Application {
+    fn start(&mut self) -> Result<(), ()>;
+    fn update(&mut self, dt: f32);
+    fn render(&self);
+    fn exit(&self);
 }
