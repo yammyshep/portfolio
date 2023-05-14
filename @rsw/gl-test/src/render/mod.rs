@@ -1,6 +1,9 @@
 use web_sys::WebGlRenderingContext;
 use wasm_bindgen::prelude::*;
 use crate::shader::Shader;
+use crate::Mesh;
+
+pub mod mesh;
 
 #[wasm_bindgen]
 extern "C" {
@@ -10,8 +13,16 @@ extern "C" {
 
 macro_rules! console_log { ($($t:tt)*) => (log(&format!("[render] {}", &format_args!($($t)*)).to_string())) }
 
+const POSITION_ATTRIBUTE: u32 = 0;
+const NORMAL_ATTRIBUTE: u32 = 1;
+const COLOR_ATTRIBUTE: u32 = 2;
+const TEXCOORD_ATTRIBUTE: u32 = 3;
+
 pub trait Renderer {
     fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()>;
+    fn draw_mesh(&self, mesh: Mesh);
+
+    #[deprecated]
     fn get_gl(&self) -> Option<&WebGlRenderingContext>;
 }
 
@@ -25,6 +36,32 @@ impl Renderer for GlRenderer {
         let program = Shader::new(&self.gl, vertex, fragment).unwrap();
         self.gl.use_program(Some(&program.program));
         Ok(program)
+    }
+
+    fn draw_mesh(&self, mesh: Mesh) {
+        self.gl.enable_vertex_attrib_array(POSITION_ATTRIBUTE);
+        self.gl.vertex_attrib_pointer_with_i32(POSITION_ATTRIBUTE, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
+
+        if (mesh.using_normals()) {
+            self.gl.enable_vertex_attrib_array(NORMAL_ATTRIBUTE);
+            self.gl.vertex_attrib_pointer_with_i32(NORMAL_ATTRIBUTE, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
+        } else {
+            self.gl.disable_vertex_attrib_array(NORMAL_ATTRIBUTE);
+        }
+
+        if (mesh.using_colors()) {
+            self.gl.enable_vertex_attrib_array(COLOR_ATTRIBUTE);
+            self.gl.vertex_attrib_pointer_with_i32(COLOR_ATTRIBUTE, 4, WebGlRenderingContext::FLOAT, false, 0, 0);
+        } else {
+            self.gl.disable_vertex_attrib_array(COLOR_ATTRIBUTE);
+        }
+
+        if (mesh.using_texcoords()) {
+            self.gl.enable_vertex_attrib_array(TEXCOORD_ATTRIBUTE);
+            self.gl.vertex_attrib_pointer_with_i32(TEXCOORD_ATTRIBUTE, 2, WebGlRenderingContext::FLOAT, false, 0, 0);
+        } else {
+            self.gl.disable_vertex_attrib_array(TEXCOORD_ATTRIBUTE);
+        }
     }
 
     fn get_gl(&self) -> Option<&WebGlRenderingContext> {

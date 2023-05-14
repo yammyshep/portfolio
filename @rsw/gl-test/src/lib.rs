@@ -12,6 +12,8 @@ use shader::Shader;
 use shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT};
 use app::*;
 use render::*;
+use render::mesh::Mesh;
+use nalgebra::vector;
 
 #[wasm_bindgen]
 extern "C" {
@@ -33,6 +35,7 @@ const VERTS: [f32; 18] = [
 #[wasm_bindgen]
 pub struct WebClient {
     render: GlRenderer,
+    mesh: Mesh,
     rot: f32,
     program: Option<Shader>,
 }
@@ -49,10 +52,10 @@ impl WebClient {
     
         let program = render.create_shader(SHADER_SIMPLE_VERT, SHADER_SIMPLE_FRAG).unwrap();
 
-        Ok(WebClient { render, rot: 0.0, program: Some(program) })
+        Ok(WebClient { render, rot: 0.0, program: Some(program), mesh: Mesh::new() })
     }
 
-    pub fn start(&self) -> Result<(), JsValue> {
+    pub fn start(&mut self) -> Result<(), JsValue> {
         console_log!("Starting!");
     
         let gl = self.render.get_gl().unwrap();
@@ -79,6 +82,13 @@ impl WebClient {
     
         gl.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
         gl.enable_vertex_attrib_array(0);
+
+        //Mesh test stuff
+        self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
+        self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
+        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
+        console_log!("{:?}", self.mesh);
+
         Ok(())
     }
 
