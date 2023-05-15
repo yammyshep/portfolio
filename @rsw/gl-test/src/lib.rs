@@ -57,37 +57,15 @@ impl WebClient {
 
     pub fn start(&mut self) -> Result<(), JsValue> {
         console_log!("Starting!");
-    
-        let gl = self.render.get_gl().unwrap();
-        let buffer = gl.create_buffer().ok_or("failed to create buffer")?;
-        gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&buffer));
-    
-        // Note that `Float32Array::view` is somewhat dangerous (hence the
-        // `unsafe`!). This is creating a raw view into our module's
-        // `WebAssembly.Memory` buffer, but if we allocate more pages for ourself
-        // (aka do a memory allocation in Rust) it'll cause the buffer to change,
-        // causing the `Float32Array` to be invalid.
-        //
-        // As a result, after `Float32Array::view` we have to be very careful not to
-        // do any memory allocations before it's dropped.
-        unsafe {
-            let vert_array = js_sys::Float32Array::view(&VERTS);
-    
-            gl.buffer_data_with_array_buffer_view(
-                WebGlRenderingContext::ARRAY_BUFFER,
-                &vert_array,
-                WebGlRenderingContext::STATIC_DRAW,
-            );
-        }
-    
-        gl.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
-        gl.enable_vertex_attrib_array(0);
 
-        //Mesh test stuff
         self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
         self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
         self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        console_log!("{:?}", self.mesh);
+        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
+        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
+        self.mesh.add_vertex(vector!(0.7, 0.7, 0.0));
+
+        self.mesh.update_buffers(&self.render);
 
         Ok(())
     }
@@ -101,13 +79,9 @@ impl WebClient {
         gl.clear_color(0.0, 0.0, 0.0, 1.0);
         gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
 
+        self.render.draw_mesh(&self.mesh);
+
         self.program.as_ref().unwrap().set_uniform1f("rotation", self.rot);
-    
-        gl.draw_arrays(
-            WebGlRenderingContext::TRIANGLES,
-            0,
-            (VERTS.len() / 3) as i32,
-        );
     }
 
     pub fn exit(&self) {
