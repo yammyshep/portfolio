@@ -15,6 +15,9 @@ use render::*;
 use render::mesh::Mesh;
 use nalgebra::vector;
 
+mod test_app;
+use test_app::TestApplication;
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
@@ -25,61 +28,36 @@ macro_rules! console_log { ($($t:tt)*) => (log(&format_args!($($t)*).to_string()
 
 #[wasm_bindgen]
 pub struct WebClient {
-    render: GlRenderer,
-    mesh: Mesh,
-    rot: f32,
-    program: Option<Shader>,
+    app: TestApplication,
 }
 
 #[wasm_bindgen]
 impl WebClient {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Result<WebClient, JsValue> {
-        let document = web_sys::window().unwrap().document().unwrap();
-        let canvas_element = document.get_element_by_id("canvas").unwrap();
-        let canvas: web_sys::HtmlCanvasElement = canvas_element.dyn_into::<web_sys::HtmlCanvasElement>()?;
-    
-        let render = GlRenderer::create(canvas)?;
-    
-        let program = render.create_shader(SHADER_SIMPLE_VERT, SHADER_SIMPLE_FRAG).unwrap();
-
-        Ok(WebClient { render, rot: 0.0, program: Some(program), mesh: Mesh::new() })
+        let app = TestApplication::new().unwrap();
+        Ok(WebClient { app })
     }
 
     pub fn start(&mut self) -> Result<(), JsValue> {
         console_log!("Starting!");
-
-        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
-        self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
-        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
-        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        self.mesh.add_vertex(vector!(0.7, 0.7, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
-
-        self.mesh.draw_mode = WebGlRenderingContext::LINE_STRIP;
-
-        self.mesh.update_buffers(&self.render);
-
-        Ok(())
+        self.app.start()
     }
 
     pub fn update(&mut self, dt: f32) {
-        self.rot += dt / 5.0;
+        self.app.update(dt);
     }
 
     pub fn render(&self) {
-        self.render.begin_render();
+        let render = self.app.get_renderer();
+        render.begin_render();
 
-        self.render.clear(vector!(0.1, 0.1, 0.1, 1.0));
-        self.program.as_ref().unwrap().set_uniform1f("rotation", self.rot);
-        self.render.draw_mesh(&self.mesh);
-        
-        self.render.end_render();
+        self.app.render();
+
+        render.end_render();
     }
 
     pub fn exit(&self) {
-        
+        self.app.exit();
     }
 }
