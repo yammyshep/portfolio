@@ -1,4 +1,4 @@
-use web_sys::WebGlRenderingContext;
+use web_sys::{WebGlRenderingContext, HtmlCanvasElement};
 use nalgebra::vector;
 use wasm_bindgen::{JsCast, JsValue};
 
@@ -55,11 +55,7 @@ impl Application for TestApplication {
 }
 
 impl TestApplication {
-    pub fn new() -> Result<Self, JsValue> {
-        let document = web_sys::window().unwrap().document().unwrap();
-        let canvas_element = document.get_element_by_id("canvas").unwrap();
-        let canvas: web_sys::HtmlCanvasElement = canvas_element.dyn_into::<web_sys::HtmlCanvasElement>()?;
-    
+    pub fn new(canvas: HtmlCanvasElement) -> Result<Self, JsValue> {
         let render = GlRenderer::create(canvas)?;
         Ok(TestApplication{ render, mesh: Mesh::new(), rot: 0.0, program: None })
     }

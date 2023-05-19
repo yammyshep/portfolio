@@ -35,7 +35,10 @@ pub struct WebClient {
 impl WebClient {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Result<WebClient, JsValue> {
-        let app = TestApplication::new().unwrap();
+        let document = web_sys::window().unwrap().document().unwrap();
+        let canvas = document.get_element_by_id("canvas").unwrap();
+        let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+        let app = TestApplication::new(canvas).unwrap();
         Ok(WebClient { app })
     }
 
