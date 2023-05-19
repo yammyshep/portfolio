@@ -1,5 +1,6 @@
 use web_sys::{WebGlRenderingContext, WebGlBuffer};
 use wasm_bindgen::prelude::*;
+use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
 use crate::shader::Shader;
 use crate::Mesh;
 
@@ -22,6 +23,9 @@ pub trait Renderer {
     fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()>;
     fn draw_mesh(&self, mesh: &Mesh);
     fn create_buffer(&self) -> Result<WebGlBuffer, ()>;
+    fn clear(&self, color: Vector4<f32>);
+    fn begin_render(&self);
+    fn end_render(&self);
 
     #[deprecated]
     fn get_gl(&self) -> Option<&WebGlRenderingContext>;
@@ -29,6 +33,7 @@ pub trait Renderer {
 
 pub struct GlRenderer {
     gl: WebGlRenderingContext,
+    canvas: Option<web_sys::HtmlCanvasElement>,
 }
 
 impl Renderer for GlRenderer {
@@ -69,7 +74,7 @@ impl Renderer for GlRenderer {
         }
 
         self.gl.draw_arrays(
-            WebGlRenderingContext::TRIANGLES,
+            mesh.draw_mode,
             0,
             mesh.num_verticies(),
         );
@@ -79,6 +84,23 @@ impl Renderer for GlRenderer {
         self.gl.create_buffer().ok_or(())
     }
 
+    fn clear(&self, color: Vector4<f32>) {
+        self.gl.clear_color(color[0], color[1], color[2], color[3]);
+        self.gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
+    }
+
+    fn begin_render(&self) {
+        if self.canvas.is_some() {
+            let width: i32 = self.canvas.as_ref().unwrap().width().try_into().unwrap();
+            let height: i32 = self.canvas.as_ref().unwrap().height().try_into().unwrap();
+            self.gl.viewport(0, 0, width, height);
+        }
+    }
+
+    fn end_render(&self) {
+
+    }
+
     fn get_gl(&self) -> Option<&WebGlRenderingContext> {
         Some(&self.gl)
     }
@@ -86,7 +108,7 @@ impl Renderer for GlRenderer {
 
 impl GlRenderer {
     pub fn new(gl: WebGlRenderingContext) -> GlRenderer {
-        GlRenderer { gl }
+        GlRenderer { gl, canvas: None }
     }
 
     pub fn create(canvas: web_sys::HtmlCanvasElement) -> Result<GlRenderer, JsValue> {
@@ -95,6 +117,6 @@ impl GlRenderer {
             .get_context("webgl")?
             .unwrap()
             .dyn_into::<WebGlRenderingContext>()?;
-        Ok(GlRenderer{gl})
+        Ok(GlRenderer{gl, canvas: Some(canvas)})
     }
 }

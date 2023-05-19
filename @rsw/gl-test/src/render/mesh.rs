@@ -27,6 +27,7 @@ pub struct MeshGen<V, N, C, T> {
     use_normals: bool,
     use_colors: bool,
     use_texcoords: bool,
+    pub draw_mode: u32,
 }
 
 impl<V, N, C, T> MeshGen<V, N, C, T> {
@@ -43,6 +44,7 @@ impl<V, N, C, T> MeshGen<V, N, C, T> {
             use_normals: false,
             use_colors: false,
             use_texcoords: false,
+            draw_mode: WebGlRenderingContext::TRIANGLES,
         }
     }
 

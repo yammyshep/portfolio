@@ -23,15 +23,6 @@ extern "C" {
 
 macro_rules! console_log { ($($t:tt)*) => (log(&format_args!($($t)*).to_string())) }
 
-const VERTS: [f32; 18] = [
-    -0.7, -0.7, 0.0,
-    0.7, -0.7, 0.0,
-    0.0, 0.0, 0.0,
-    -0.7, 0.7, 0.0,
-    0.0, 0.0, 0.0,
-    0.7, 0.7, 0.0,
-];
-
 #[wasm_bindgen]
 pub struct WebClient {
     render: GlRenderer,
@@ -45,8 +36,8 @@ impl WebClient {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Result<WebClient, JsValue> {
         let document = web_sys::window().unwrap().document().unwrap();
-        let canvas = document.get_element_by_id("canvas").unwrap();
-        let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+        let canvas_element = document.get_element_by_id("canvas").unwrap();
+        let canvas: web_sys::HtmlCanvasElement = canvas_element.dyn_into::<web_sys::HtmlCanvasElement>()?;
     
         let render = GlRenderer::create(canvas)?;
     
@@ -58,12 +49,16 @@ impl WebClient {
     pub fn start(&mut self) -> Result<(), JsValue> {
         console_log!("Starting!");
 
+        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
         self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
         self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
         self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
         self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
         self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
         self.mesh.add_vertex(vector!(0.7, 0.7, 0.0));
+        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
+
+        self.mesh.draw_mode = WebGlRenderingContext::LINE_STRIP;
 
         self.mesh.update_buffers(&self.render);
 
@@ -75,13 +70,13 @@ impl WebClient {
     }
 
     pub fn render(&self) {
-        let gl = self.render.get_gl().unwrap();
-        gl.clear_color(0.0, 0.0, 0.0, 1.0);
-        gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
+        self.render.begin_render();
 
-        self.render.draw_mesh(&self.mesh);
-
+        self.render.clear(vector!(0.1, 0.1, 0.1, 1.0));
         self.program.as_ref().unwrap().set_uniform1f("rotation", self.rot);
+        self.render.draw_mesh(&self.mesh);
+        
+        self.render.end_render();
     }
 
     pub fn exit(&self) {
