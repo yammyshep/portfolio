@@ -26,6 +26,8 @@ pub trait Renderer {
     fn clear(&self, color: Vector4<f32>);
     fn begin_render(&self);
     fn end_render(&self);
+    fn get_width(&self) -> i32;
+    fn get_height(&self) -> i32;
     fn aspect(&self) -> f32;
 
     #[deprecated]
@@ -92,9 +94,7 @@ impl Renderer for GlRenderer {
 
     fn begin_render(&self) {
         if self.canvas.is_some() {
-            let width: i32 = self.canvas.as_ref().unwrap().width().try_into().unwrap();
-            let height: i32 = self.canvas.as_ref().unwrap().height().try_into().unwrap();
-            self.gl.viewport(0, 0, width, height);
+            self.gl.viewport(0, 0, self.get_width(), self.get_height());
         }
     }
 
@@ -102,10 +102,16 @@ impl Renderer for GlRenderer {
 
     }
 
+    fn get_width(&self) -> i32 {
+        self.canvas.as_ref().unwrap().width().try_into().unwrap()
+    }
+
+    fn get_height(&self) -> i32 {
+        self.canvas.as_ref().unwrap().height().try_into().unwrap()
+    }
+
     fn aspect(&self) -> f32 {
-        let width: i32 = self.canvas.as_ref().unwrap().width().try_into().unwrap();
-        let height: i32 = self.canvas.as_ref().unwrap().height().try_into().unwrap();
-        (width as f32) / (height as f32)
+        (self.get_width() as f32) / (self.get_height() as f32)
     }
 
     fn get_gl(&self) -> Option<&WebGlRenderingContext> {
