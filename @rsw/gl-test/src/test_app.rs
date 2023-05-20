@@ -1,5 +1,6 @@
 use web_sys::{WebGlRenderingContext, HtmlCanvasElement};
 use nalgebra::vector;
+use nalgebra::{Matrix4};
 use wasm_bindgen::{JsCast, JsValue};
 
 use crate::app::Application;
@@ -40,7 +41,15 @@ impl Application for TestApplication {
     fn render(&self) {
 
         self.render.clear(vector!(0.1, 0.1, 0.1, 1.0));
-        self.program.as_ref().unwrap().set_uniform1f("rotation", self.rot);
+        let model = Matrix4::new(
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, -5.0,
+            0.0, 0.0, 0.0, 1.0
+        );
+        let projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.1, 100.0);
+        let mvp = projection * model;
+        self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
         self.render.draw_mesh(&self.mesh);
 
     }
