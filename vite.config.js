@@ -5,4 +5,9 @@ export default defineConfig({
   plugins: [
     ViteRsw(),
   ],
+  esbuild: {
+    supported: {
+      'top-level-await': true
+    }
+  }
 })

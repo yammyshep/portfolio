@@ -14,4 +14,4 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag webgltest-env
     - name: Build static site
-      run: docker run --workdir /src -v $(pwd):/src webgltest-env npm run build
+      run: docker run --workdir /src -v $(pwd):/src webgltest-env sh -c "npm ci && npm run build"
