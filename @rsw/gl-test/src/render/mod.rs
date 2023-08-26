@@ -42,7 +42,7 @@ pub struct GlRenderer {
 impl Renderer for GlRenderer {
     fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()> {
         console_log!("Creating shader...");
-        let program = Shader::new(&self.gl, vertex, fragment).unwrap();
+        let program = Shader::new(&self.gl, vertex, fragment).or(Err(()))?;
         self.gl.use_program(Some(&program.program));
         Ok(program)
     }
