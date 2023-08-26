@@ -67,7 +67,7 @@ RUN set -ex \
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.69.0
+    RUST_VERSION=1.72.0
 
 RUN set -eux; \
     dpkgArch="$(dpkg --print-architecture)"; \
@@ -89,7 +89,8 @@ RUN set -eux; \
     cargo --version; \
     rustc --version;
 
-RUN cargo install wasm-pack rsw
+RUN cargo install --version 0.12.1 wasm-pack && \
+    cargo install --version 0.8.0 rsw
 
 EXPOSE 5173
 
