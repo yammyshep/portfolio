@@ -1,4 +1,4 @@
-use nalgebra::{Vector2, Vector3, Vector4};
+use nalgebra::*;
 use crate::render::Renderer;
 use web_sys::{WebGlBuffer, WebGlRenderingContext};
 use js_sys::Float32Array;
@@ -117,25 +117,60 @@ impl Mesh {
             self.vertex_buffer = render.create_buffer().ok();
         }
 
-        //TODO: Fix this fucking awful algorithm
-        let indicies: usize = (self.num_verticies() * 3).try_into().unwrap();
-        let vert_array = Float32Array::new_with_length(indicies as u32);
-        let vertslice = self.verticies.as_slice();
-        let verts = self.num_verticies();
-        for i in 0..verts {
-            for j in 0..3 {
-                let index: usize = i.try_into().unwrap();
-                let pos: i32 = (i*3) + (j as i32);
-                vert_array.set_index(pos as u32, vertslice[index][j]);
+        let vert_array = copy_to_array(&self.verticies);
+        self.bind_array_to_buffer(&vert_array, &self.vertex_buffer, render);
+
+        if self.use_normals {
+            if self.normal_buffer.is_none() {
+                self.normal_buffer = render.create_buffer().ok();
             }
+
+            let norm_array = copy_to_array(&self.normals);
+            self.bind_array_to_buffer(&norm_array, &self.normal_buffer, render);
         }
 
+        if self.use_colors {
+            if self.colors_buffer.is_none() {
+                self.colors_buffer = render.create_buffer().ok()
+            }
+
+            let color_array = copy_to_array(&self.colors);
+            self.bind_array_to_buffer(&color_array, &self.colors_buffer, render);
+        }
+
+        if self.use_texcoords {
+            if self.texcoord_buffer.is_none() {
+                self.texcoord_buffer = render.create_buffer().ok();
+            }
+
+            let texcoord_array = copy_to_array(&self.texcoords);
+            self.bind_array_to_buffer(&texcoord_array, &self.texcoord_buffer, render);
+        }
+    }
+
+    fn bind_array_to_buffer(&self, array: &Float32Array, buffer: &Option<WebGlBuffer>, render: &dyn Renderer) {
         let gl = render.get_gl().unwrap();
-        gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, self.vertex_buffer.as_ref());
+        gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, buffer.as_ref());
         gl.buffer_data_with_array_buffer_view(
             WebGlRenderingContext::ARRAY_BUFFER,
-            &vert_array,
-            WebGlRenderingContext::STATIC_DRAW,
+            array,
+            WebGlRenderingContext::STATIC_DRAW
         );
     }
+}
+
+fn copy_to_array<D, S>(input: &Vec<Vector<f32, D, S>>) -> Float32Array 
+    where D: Dim, S: RawStorage<f32, D> {
+    let indicies: u32 = input.len().try_into().unwrap();
+    let stride: u32 = input[0].len().try_into().unwrap();
+    let array = Float32Array::new_with_length(indicies * stride);
+
+    let slice = input.as_slice();
+    for i in 0..indicies {
+        for j in 0..stride {
+            array.set_index((i*3)+j, slice[i as usize][j as usize].try_into().unwrap());
+        }
+    }
+
+    array
 }
