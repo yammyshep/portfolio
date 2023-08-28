@@ -1,6 +1,6 @@
 use web_sys::{WebGlRenderingContext, HtmlCanvasElement};
 use nalgebra::vector;
-use nalgebra::{Matrix4, Vector3};
+use nalgebra::*;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
 
@@ -34,15 +34,19 @@ impl Application for TestApplication {
             panic!();
         }
 
-        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
-        self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
-        self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
-        self.mesh.add_vertex(vector!(0.7, 0.7, 0.0));
-        self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0)); 
+        //self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
+        //self.mesh.add_vertex(vector!(-0.7, -0.7, 0.0));
+        //self.mesh.add_vertex(vector!(0.7, -0.7, 0.0));
+        //self.mesh.add_vertex(vector!(-0.7, 0.7, 0.0));
+        //self.mesh.add_vertex(vector!(0.0, 0.0, 0.0));
+        //self.mesh.add_vertex(vector!(0.7, 0.7, 0.0));
 
-        self.mesh.draw_mode = WebGlRenderingContext::LINE_STRIP;
+        self.mesh.add_verticies(
+            recursive_subdivide(
+                vector!(0.0, 1.0, 0.0),
+                vector!(-1.7, -1.7, 0.0),
+                vector!(1.7, -1.7, 0.0), 2)
+        );
 
         self.mesh.update_buffers(&self.render);
         Ok(())
@@ -79,4 +83,25 @@ impl TestApplication {
         let render = GlRenderer::create(canvas)?;
         Ok(TestApplication{ render, mesh: Mesh::new(), rot: 0.0, program: None, time: 0.0 })
     }
+}
+
+fn recursive_subdivide(a: Vector3<f32>, b: Vector3<f32>, c: Vector3<f32>, iterations: i32) -> Vec<Vector3<f32>> {
+    let mut divisions = subdivide_trig(a, b, c);
+
+    if iterations > 2 {
+        let mut divOut: Vec<Vector3<f32>> = Vec::new();
+        for i in 0..4 {
+            divOut.append(&mut recursive_subdivide(divisions[i*3], divisions[(i*3)+1], divisions[(i*3)+2], iterations - 1));
+        }
+        divisions = divOut;
+    }
+
+    divisions
+}
+
+fn subdivide_trig(a: Vector3<f32>, b: Vector3<f32>, c: Vector3<f32>) -> Vec<Vector3<f32>> {
+    let ab = ((b - a) * 0.5) + a;
+    let bc = ((c - b) * 0.5) + b;
+    let ca = ((c - a) * 0.5) + a;
+    vec!(a, ab, ca, b, bc, ab, c, ca, bc, ab, bc, ca)
 }

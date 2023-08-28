@@ -64,6 +64,30 @@ impl<V, N, C, T> MeshGen<V, N, C, T> {
         self.texcoords.push(coord);
     }
 
+    pub fn add_verticies(&mut self, verts: Vec<V>) {
+        for vert in verts {
+            self.add_vertex(vert);
+        }
+    }
+
+    pub fn add_normals(&mut self, norms: Vec<N>) {
+        for norm in norms {
+            self.add_normal(norm);
+        }
+    }
+
+    pub fn add_colors(&mut self, colors: Vec<C>) {
+        for color in colors {
+            self.add_color(color);
+        }
+    }
+
+    pub fn add_texcoords(&mut self, coords: Vec<T>) {
+        for coord in coords {
+            self.add_texcoord(coord);
+        }
+    }
+
     pub fn get_verticies(&self) -> &Vec<V> { &self.verticies }
     pub fn get_normals(&self) -> &Vec<N> { &self.normals }
     pub fn get_colors(&self) -> &Vec<C> { &self.colors }
