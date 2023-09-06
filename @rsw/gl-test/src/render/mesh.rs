@@ -24,9 +24,9 @@ pub struct MeshGen<V, N, C, T> {
     normal_buffer: Option<WebGlBuffer>,
     colors_buffer: Option<WebGlBuffer>,
     texcoord_buffer: Option<WebGlBuffer>,
-    use_normals: bool,
-    use_colors: bool,
-    use_texcoords: bool,
+    pub use_normals: bool,
+    pub use_colors: bool,
+    pub use_texcoords: bool,
     pub draw_mode: u32,
 }
 
@@ -108,6 +108,10 @@ impl<V, N, C, T> MeshGen<V, N, C, T> {
 
     pub fn draw(&self) {
         
+    }
+
+    pub fn len(&self) -> usize {
+        self.verticies.len()
     }
 }
 

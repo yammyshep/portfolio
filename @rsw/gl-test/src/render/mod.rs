@@ -5,6 +5,7 @@ use crate::shader::Shader;
 use crate::Mesh;
 
 pub mod mesh;
+pub mod light;
 
 #[wasm_bindgen]
 extern "C" {
