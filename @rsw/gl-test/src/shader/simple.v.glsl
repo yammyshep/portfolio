@@ -7,7 +7,7 @@ varying vec3 frag_normal;
 
 uniform mat4 mvp;
 uniform mat4 normalMatrix;
-//uniform float time;
+uniform float time;
 
 void main() {
     gl_Position = mvp * position;

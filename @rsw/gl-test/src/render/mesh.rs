@@ -161,6 +161,21 @@ impl Mesh {
             WebGlRenderingContext::STATIC_DRAW
         );
     }
+
+    pub fn generate_normals(&mut self) {
+        self.normals.clear();
+
+        for i in 0..(self.verticies.len() / 3) {
+            let a = self.verticies[i * 3];
+            let b = self.verticies[(i * 3) + 1];
+            let c = self.verticies[(i * 3) + 2];
+
+            let n = ((b-a).cross(&(c-a))).normalize();
+            self.add_normals(vec![n,n,n]);
+        }
+
+        self.use_normals = true;
+    }
 }
 
 fn copy_to_array<D, S>(input: &Vec<Vector<f32, D, S>>) -> Float32Array 
