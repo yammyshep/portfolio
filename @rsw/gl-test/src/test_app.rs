@@ -3,7 +3,7 @@ use nalgebra::vector;
 use nalgebra::*;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen::prelude::*;
-use rand::Rng;
+use noise::{NoiseFn, Perlin, Seedable};
 
 use crate::app::Application;
 use crate::render::{Renderer, GlRenderer, mesh::Mesh, light::AmbientLight, light::DirectionalLight};
@@ -69,11 +69,14 @@ impl Application for TestApplication {
 
     fn update(&mut self, dt: f32) {
         self.time += dt;
-        self.projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.1, 100.0);
+        self.projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.01, 100.0);
 
+        let perlin = Perlin::new(1);
         self.computed_mesh = Mesh::new();
         for vert in self.mesh.get_verticies() {
-            self.computed_mesh.add_vertex(vert + rand_vec(vector!(0.0,0.0,0.001)));
+            let noise_in = vert * 10.0;
+            let noise = perlin.get([noise_in.x as f64, noise_in.y as f64, self.time as f64]);
+            self.computed_mesh.add_vertex(vert + 0.1 * vector!(0.0, 0.0, noise as f32));
         }
 
         self.computed_mesh.generate_normals();
@@ -132,7 +135,7 @@ impl TestApplication {
             projection: Matrix4::identity(),
             ambient_light: AmbientLight{
                 color: vector!(1.0, 1.0, 1.0),
-                intensity: 0.01,
+                intensity: 0.2,
             },
             dir_light: DirectionalLight{
                 color: vector!(1.0, 1.0, 1.0),
@@ -141,13 +144,6 @@ impl TestApplication {
             },
         })
     }
-}
-
-fn rand_vec(weight: Vector3<f32>) -> Vector3<f32> {
-    let mut rng = rand::thread_rng();
-    vector!(rng.gen_range(-1.0..1.0) * weight.x,
-        rng.gen_range(-1.0..1.0) * weight.y,
-        rng.gen_range(-1.0..1.0) * weight.z)
 }
 
 fn recursive_subdivide(a: Vector3<f32>, b: Vector3<f32>, c: Vector3<f32>, iterations: i32) -> Vec<Vector3<f32>> {
