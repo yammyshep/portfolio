@@ -6,6 +6,7 @@ use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
 
 pub const SHADER_SIMPLE_VERT: &str = include_str!("./simple.v.glsl");
 pub const SHADER_SIMPLE_FRAG: &str = include_str!("./simple.f.glsl");
+pub const SHADER_FLATCOLOR_FRAG: &str = include_str!("./flatcolor.f.glsl");
 
 pub struct Shader {
     pub program: WebGlProgram,

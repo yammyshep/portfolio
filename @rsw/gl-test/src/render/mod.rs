@@ -22,7 +22,9 @@ const TEXCOORD_ATTRIBUTE: u32 = 3;
 
 pub trait Renderer {
     fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()>;
+    fn set_shader(&self, program: Option<&Shader>);
     fn draw_mesh(&self, mesh: &Mesh);
+    fn draw_mesh_mode(&self, mesh: &Mesh, draw_mode: u32);
     fn create_buffer(&self) -> Result<WebGlBuffer, ()>;
     fn clear(&self, color: Vector4<f32>);
     fn begin_render(&self);
@@ -44,11 +46,20 @@ impl Renderer for GlRenderer {
     fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()> {
         console_log!("Creating shader...");
         let program = Shader::new(&self.gl, vertex, fragment).or(Err(()))?;
-        self.gl.use_program(Some(&program.program));
         Ok(program)
     }
 
+    fn set_shader(&self, program: Option<&Shader>) {
+        if program.is_some() {
+            self.gl.use_program(Some(&(program.unwrap().program)));
+        }
+    }
+
     fn draw_mesh(&self, mesh: &Mesh) {
+        self.draw_mesh_mode(mesh, mesh.draw_mode);
+    }
+
+    fn draw_mesh_mode(&self, mesh: &Mesh, draw_mode: u32) {
         self.gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, mesh.get_vertex_buffer());
         self.gl.enable_vertex_attrib_array(POSITION_ATTRIBUTE);
         self.gl.vertex_attrib_pointer_with_i32(POSITION_ATTRIBUTE, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
@@ -78,7 +89,7 @@ impl Renderer for GlRenderer {
         }
 
         self.gl.draw_arrays(
-            mesh.draw_mode,
+            draw_mode,
             0,
             mesh.num_verticies(),
         );

@@ -8,7 +8,7 @@ use noise::{NoiseFn, Perlin, Seedable};
 use crate::app::Application;
 use crate::render::{Renderer, GlRenderer, mesh::Mesh, light::AmbientLight, light::DirectionalLight};
 use crate::shader::Shader;
-use crate::shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT};
+use crate::shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT, SHADER_FLATCOLOR_FRAG};
 
 #[wasm_bindgen]
 extern "C" {
@@ -22,8 +22,10 @@ pub struct TestApplication {
     render: GlRenderer,
     mesh: Mesh,
     computed_mesh: Mesh,
+    outline_mesh: Mesh,
     time: f32,
     program: Option<Shader>,
+    outline_program: Option<Shader>,
     view: Matrix4<f32>,
     projection: Matrix4<f32>,
     ambient_light: AmbientLight,
@@ -34,8 +36,9 @@ pub struct TestApplication {
 impl Application for TestApplication {
     fn start(&mut self) -> Result<(), JsValue> {
         self.program = self.render.create_shader(SHADER_SIMPLE_VERT, SHADER_SIMPLE_FRAG).ok();
+        self.outline_program = self.render.create_shader(SHADER_SIMPLE_VERT, SHADER_FLATCOLOR_FRAG).ok();
 
-        if self.program.is_none() {
+        if self.program.is_none() || self.outline_program.is_none() {
             console_log!("Failed to compile shaders!");
             panic!();
         }
@@ -89,6 +92,15 @@ impl Application for TestApplication {
 
         self.computed_mesh.generate_normals();
         self.computed_mesh.update_buffers(&self.render);
+
+        // Create wireframe mesh of lines
+        self.outline_mesh = Mesh::new();
+        let v = self.computed_mesh.get_verticies();
+        for i in (0..self.computed_mesh.len()).step_by(3) {
+            self.outline_mesh.add_verticies(vec!(v[i], v[i + 1], v[i + 1], v[i + 2]));
+        }
+        self.outline_mesh.draw_mode = WebGlRenderingContext::LINES;
+        self.outline_mesh.update_buffers(&self.render);
     }
 
     fn render(&self) {
@@ -111,7 +123,9 @@ impl Application for TestApplication {
         }
         
         let mvp = self.projection * self.view * model;
-        
+
+        // Render mesh
+        self.render.set_shader(self.program.as_ref());
         self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
         self.program.as_ref().unwrap().set_uniform_matrix4f("normalMatrix", model.transpose().try_inverse().unwrap_or(Matrix4::identity()));
         self.program.as_ref().unwrap().set_uniform1f("time", self.time);
@@ -119,6 +133,12 @@ impl Application for TestApplication {
         self.program.as_ref().unwrap().set_uniform4f("directionalLightColor", self.dir_light.color.push(self.dir_light.intensity));
         self.program.as_ref().unwrap().set_uniform3f("directionalLightDir", self.dir_light.direction);
         self.render.draw_mesh(&self.computed_mesh);
+
+        // Render the outline
+        self.render.set_shader(self.outline_program.as_ref());
+        self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
+        self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.0, 0.0, 1.0, 1.0));
+        self.render.draw_mesh(&self.outline_mesh);
     }
 
     fn exit(&self) {
@@ -137,7 +157,9 @@ impl TestApplication {
             render,
             mesh: Mesh::new(),
             computed_mesh: Mesh::new(),
+            outline_mesh: Mesh::new(),
             program: None,
+            outline_program: None,
             time: 0.0,
             view: Matrix4::identity(),
             projection: Matrix4::identity(),
