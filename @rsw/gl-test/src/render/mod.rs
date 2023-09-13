@@ -133,4 +133,12 @@ impl GlRenderer {
             .dyn_into::<WebGlRenderingContext>()?;
         Ok(GlRenderer{gl, canvas: Some(canvas)})
     }
+
+    pub fn enable_depth_test(&self) {
+        self.gl.enable(WebGlRenderingContext::DEPTH_TEST);
+    }
+
+    pub fn disable_depth_test(&self) {
+        self.gl.disable(WebGlRenderingContext::DEPTH_TEST);
+    }
 }

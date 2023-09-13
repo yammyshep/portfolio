@@ -36,14 +36,13 @@ impl Shader {
         let mut uniforms = self.uniforms.borrow_mut();
 
         if uniforms.get(uniform_name).is_none() {
-            uniforms.insert(
-                uniform_name.to_string(),
-                self.gl.get_uniform_location(&self.program, uniform_name)
-                    .expect(&format!(r#"Uniform '{}' not found"#, uniform_name)),
-            );
+            match self.gl.get_uniform_location(&self.program, uniform_name) {
+                Some(loc) => uniforms.insert(uniform_name.to_string(), loc),
+                None => None
+            };
         }
 
-        Some(uniforms.get(uniform_name).expect("loc").clone())
+        uniforms.get(uniform_name).map(|l| l.clone())
     }
 
     pub fn set_uniform1f(&self, name: &str, x: f32) -> Result<(), ()> {

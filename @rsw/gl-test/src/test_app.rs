@@ -28,6 +28,7 @@ pub struct TestApplication {
     projection: Matrix4<f32>,
     ambient_light: AmbientLight,
     dir_light: DirectionalLight,
+    perlin: Perlin,
 }
 
 impl Application for TestApplication {
@@ -71,13 +72,20 @@ impl Application for TestApplication {
         self.time += dt;
         self.projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.01, 100.0);
 
-        let perlin = Perlin::new(1);
+        
         self.computed_mesh = Mesh::new();
         for vert in self.mesh.get_verticies() {
             let noise_in = vert * 10.0;
-            let noise = perlin.get([noise_in.x as f64, noise_in.y as f64, self.time as f64]);
-            self.computed_mesh.add_vertex(vert + 0.1 * vector!(0.0, 0.0, noise as f32));
+
+            let noise_out: Vector3<f32> = Vector3::new(0.0, 0.0,
+                0.1 * self.perlin.get([noise_in.x as f64, noise_in.y as f64, self.time as f64]) as f32,
+            );
+
+            self.computed_mesh.add_vertex(vert + noise_out);
+            self.computed_mesh.add_color(vector!(1.0,0.0,0.0,1.0));
         }
+
+        self.computed_mesh.use_colors = true;
 
         self.computed_mesh.generate_normals();
         self.computed_mesh.update_buffers(&self.render);
@@ -94,7 +102,7 @@ impl Application for TestApplication {
         // Rotate and scale model to fill screen
         let angle: f32 = upper_right.xyz().angle(&vector!(0.0,1.0,0.0));
         let mut model = Matrix4::from_axis_angle(&Unit::new_normalize(vector!(0.0,0.0,-1.0)), angle);
-        model = model * Matrix4::new_scaling(upper_right.magnitude() * 2.0);
+        model = model * Matrix4::new_scaling(upper_right.magnitude() * 2.5); // extra 0.5
 
         // This is probably over-correcting but I do not care :)
         let over_angle = angle - (60.0 * (std::f32::consts::PI / 180.0));
@@ -106,7 +114,7 @@ impl Application for TestApplication {
         
         self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
         self.program.as_ref().unwrap().set_uniform_matrix4f("normalMatrix", model.transpose().try_inverse().unwrap_or(Matrix4::identity()));
-        //self.program.as_ref().unwrap().set_uniform1f("time", self.time);
+        self.program.as_ref().unwrap().set_uniform1f("time", self.time);
         self.program.as_ref().unwrap().set_uniform4f("ambientLightColor", self.ambient_light.color.push(self.ambient_light.intensity));
         self.program.as_ref().unwrap().set_uniform4f("directionalLightColor", self.dir_light.color.push(self.dir_light.intensity));
         self.program.as_ref().unwrap().set_uniform3f("directionalLightDir", self.dir_light.direction);
@@ -142,6 +150,7 @@ impl TestApplication {
                 intensity: 1.0,
                 direction: vector!(1.0, 0.0, 1.0).normalize(),
             },
+            perlin: Perlin::new(3),
         })
     }
 }

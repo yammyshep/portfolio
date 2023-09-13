@@ -187,7 +187,7 @@ fn copy_to_array<D, S>(input: &Vec<Vector<f32, D, S>>) -> Float32Array
     let slice = input.as_slice();
     for i in 0..indicies {
         for j in 0..stride {
-            array.set_index((i*3)+j, slice[i as usize][j as usize].try_into().unwrap());
+            array.set_index((i*stride)+j, slice[i as usize][j as usize].try_into().unwrap());
         }
     }
 

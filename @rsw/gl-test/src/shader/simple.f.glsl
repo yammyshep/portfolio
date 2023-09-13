@@ -1,6 +1,7 @@
 precision mediump float;
 
 varying vec3 frag_normal;
+varying vec4 frag_color;
 
 //uniform float time;
 uniform vec4 ambientLightColor;
@@ -14,5 +15,5 @@ void main() {
     vec3 irradiance = (ambientLightColor.rgb * ambientLightColor.a) + 
         (directionalLightColor.rgb * directionalLightColor.a) * shadeFactor;
 
-    gl_FragColor = vec4(pow(irradiance, vec3(1.0/2.2)), 1.0);
+    gl_FragColor = vec4(pow(frag_color.rgb * irradiance, vec3(1.0/2.2)), 1.0);
 }
