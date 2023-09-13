@@ -45,6 +45,8 @@ impl Application for TestApplication {
 
         console_log!("Shader compiled!");
 
+        self.render.enable_depth_test();
+
         self.view = Matrix4::new_translation(&vector!(0.0, 0.0, -1.0));
         self.projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.1, 100.0);
 
@@ -78,7 +80,7 @@ impl Application for TestApplication {
         
         self.computed_mesh = Mesh::new();
         for vert in self.mesh.get_verticies() {
-            let noise_in = vert * 10.0;
+            let noise_in = (vert * 7.5) + vector!(128.0, 128.0, 0.0);
 
             let noise_out: Vector3<f32> = Vector3::new(0.0, 0.0,
                 0.1 * self.perlin.get([noise_in.x as f64, noise_in.y as f64, self.time as f64]) as f32,
@@ -97,7 +99,8 @@ impl Application for TestApplication {
         self.outline_mesh = Mesh::new();
         let v = self.computed_mesh.get_verticies();
         for i in (0..self.computed_mesh.len()).step_by(3) {
-            self.outline_mesh.add_verticies(vec!(v[i], v[i + 1], v[i + 1], v[i + 2]));
+            let o = vector!(0.0, 0.0, 0.00005);
+            self.outline_mesh.add_verticies(vec!(v[i]+o, v[i + 1]+o, v[i + 1]+o, v[i + 2]+o));
         }
         self.outline_mesh.draw_mode = WebGlRenderingContext::LINES;
         self.outline_mesh.update_buffers(&self.render);
