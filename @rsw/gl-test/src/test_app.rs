@@ -83,11 +83,11 @@ impl Application for TestApplication {
             let noise_in = (vert * 7.5) + vector!(128.0, 128.0, 0.0);
 
             let noise_out: Vector3<f32> = Vector3::new(0.0, 0.0,
-                0.1 * self.perlin.get([noise_in.x as f64, noise_in.y as f64, self.time as f64]) as f32,
+                0.1 * self.perlin.get([noise_in.x as f64, noise_in.y as f64, (self.time * 0.5) as f64]) as f32,
             );
 
             self.computed_mesh.add_vertex(vert + noise_out);
-            self.computed_mesh.add_color(vector!(1.0,0.0,0.0,1.0));
+            self.computed_mesh.add_color(vector!(0.114, 0.137, 0.165, 1.0));
         }
 
         self.computed_mesh.use_colors = true;
@@ -140,7 +140,7 @@ impl Application for TestApplication {
         // Render the outline
         self.render.set_shader(self.outline_program.as_ref());
         self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
-        self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.0, 0.0, 1.0, 1.0));
+        self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.851, 0.149, 0.663, 1.0));
         self.render.draw_mesh(&self.outline_mesh);
     }
 
@@ -168,12 +168,12 @@ impl TestApplication {
             projection: Matrix4::identity(),
             ambient_light: AmbientLight{
                 color: vector!(1.0, 1.0, 1.0),
-                intensity: 0.2,
+                intensity: 0.1,
             },
             dir_light: DirectionalLight{
-                color: vector!(1.0, 1.0, 1.0),
-                intensity: 1.0,
-                direction: vector!(1.0, 0.0, 1.0).normalize(),
+                color: vector!(0.545, 0.329, 0.929),
+                intensity: 0.66,
+                direction: vector!(1.0, 1.0, 1.0).normalize(),
             },
             perlin: Perlin::new(3),
         })
