@@ -1,4 +1,4 @@
-name: Build Static Site
+name: Test Site
 
 on:
   push:
@@ -15,3 +15,9 @@ jobs:
       run: docker build . --file Dockerfile --tag webgltest-env
     - name: Build static site
       run: docker run --workdir /src -v $(pwd):/src webgltest-env sh -c "npm ci && npm run build"
+    - name: Upload Artifact
+      uses: actions/upload-artifact
+      with:
+        name: static-site
+        path: dist/
+        if-no-files-found: error
