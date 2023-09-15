@@ -16,7 +16,7 @@ jobs:
     - name: Build static site
       run: docker run --workdir /src -v $(pwd):/src webgltest-env sh -c "npm ci && npm run build"
     - name: Upload Artifact
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v3
       with:
         name: static-site
         path: dist/
