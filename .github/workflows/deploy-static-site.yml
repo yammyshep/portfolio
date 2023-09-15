@@ -3,7 +3,7 @@ name: Deploy Site
 on:
   workflow_run:
     workflows: Test Site
-    #branches: main
+    branches: main
     types: completed
 
 jobs:
@@ -19,5 +19,16 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           name: static-site
           path: dist
-      - name: "TEST: Display files"
-        run: ls -Rla
+      - name: Upload static site to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          proxy_host: ${{ secrets.DEPLOY_PROXY_HOST }}
+          proxy_username: ${{ secrets.DEPLOY_PROXY_USERNAME }}
+          proxy_key: ${{ secrets.DEPLOY_PROXY_KEY }}
+          source: dist/*
+          target: /var/www/jbuelow.com/
+          strip_components: 1
+          overwrite: true
