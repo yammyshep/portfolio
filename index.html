@@ -8,13 +8,13 @@
     <title>Vite App</title>
   </head>
   <body>
-    <canvas id="canvas" class="-z-10 absolute h-screen w-screen"></canvas>
+    <canvas id="canvas" class="-z-10 h-screen w-screen fixed"></canvas>
     <script type="module" src="/src/module.js"></script>
     <script type="module" src="/src/resizer.js"></script>
     <div class="md:float-left md:w-1/3 md:h-screen p-1 md:p-8">
       <div class="card bg-base-300/50 backdrop-blur-sm shadow-xl">
         <div class="card-body">
-          <div class="avatar self-center w-64 mb-5">
+          <div class="avatar self-center w-64 mb-5 md:w-full lg:w-64">
             <img class="mask mask-squircle" src="/avatar.jpg" alt="Avatar">
           </div>
           <h1 class="card-title justify-center text-primary text-3xl">Jacob Buelow</h1>
@@ -62,9 +62,9 @@
         <input type="radio" name="project-accordian" />
         <div class="collapse-title p-0 h-32 overflow-hidden flex">
           <img class="h-full" src="https://i.redd.it/cwdg7g1vqjj21.jpg" alt="aa">
-          <div class="p-0 m-4 mr-12 min-w-0 flex flex-col">
+          <div class="p-0 m-4 mr-12 min-w-0 flex flex-col justify-center">
             <h2 class="text-3xl font-medium">Project title goes here!</h2>
-            <p class="mt-2 hidden md:inline min-h-0 truncate">
+            <p class="mt-2 hidden lg:inline min-h-0 truncate">
               Project breif goes here!<br>
               Should probably be a couple of lines to keep this from looking like shit!
               But what if it goes on for too many lines? Will it start to look like shit then because CSS is the bane of my fucking existence???
