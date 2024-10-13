@@ -1,7 +1,9 @@
 use web_sys::{WebGlRenderingContext, WebGlBuffer};
 use wasm_bindgen::prelude::*;
 use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
-use crate::shader::Shader;
+
+use crate::shader::shader::Shader;
+use crate::shader::program::Program;
 use crate::Mesh;
 
 pub mod mesh;
@@ -21,8 +23,8 @@ const COLOR_ATTRIBUTE: u32 = 2;
 const TEXCOORD_ATTRIBUTE: u32 = 3;
 
 pub trait Renderer {
-    fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()>;
-    fn set_shader(&self, program: Option<&Shader>);
+    fn create_program(&self, vertex: &str, fragment: &str) -> Result<Program, ()>;
+    fn set_program(&self, program: Option<&Program>);
     fn draw_mesh(&self, mesh: &Mesh);
     fn draw_mesh_mode(&self, mesh: &Mesh, draw_mode: u32);
     fn create_buffer(&self) -> Result<WebGlBuffer, ()>;
@@ -43,15 +45,22 @@ pub struct GlRenderer {
 }
 
 impl Renderer for GlRenderer {
-    fn create_shader(&self, vertex: &str, fragment: &str) -> Result<Shader, ()> {
-        console_log!("Creating shader...");
-        let program = Shader::new(&self.gl, vertex, fragment).or(Err(()))?;
+    fn create_program(&self, vertex: &str, fragment: &str) -> Result<Program, ()> {
+        console_log!("Creating shader program...");
+        let mut program = Program::new(&self.gl).or(Err(()))?;
+        let mut vert = Shader::new(&self.gl, vertex.to_string(), WebGlRenderingContext::VERTEX_SHADER);
+        let mut frag = Shader::new(&self.gl, fragment.to_string(), WebGlRenderingContext::FRAGMENT_SHADER);
+
+        vert.compile().or(Err(()))?;
+        frag.compile().or(Err(()))?;
+
+        program.link(&vert, &frag).or(Err(()));
         Ok(program)
     }
 
-    fn set_shader(&self, program: Option<&Shader>) {
+    fn set_program(&self, program: Option<&Program>) {
         if program.is_some() {
-            self.gl.use_program(Some(&(program.unwrap().program)));
+            self.gl.use_program(Some(&(program.unwrap().wgl_program)));
         }
     }
 

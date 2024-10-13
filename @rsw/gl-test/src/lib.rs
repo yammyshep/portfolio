@@ -8,8 +8,6 @@ mod app;
 mod render;
 mod shader;
 
-use shader::Shader;
-use shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT};
 use app::*;
 use render::*;
 use render::mesh::Mesh;

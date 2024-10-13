@@ -7,8 +7,8 @@ use noise::{NoiseFn, Perlin, Seedable};
 
 use crate::app::Application;
 use crate::render::{Renderer, GlRenderer, mesh::Mesh, light::AmbientLight, light::DirectionalLight};
-use crate::shader::Shader;
-use crate::shader::{SHADER_SIMPLE_FRAG, SHADER_SIMPLE_VERT, SHADER_FLATCOLOR_FRAG};
+use crate::shader::shader::Shader;
+use crate::shader::program::Program;
 
 #[wasm_bindgen]
 extern "C" {
@@ -24,8 +24,8 @@ pub struct TestApplication {
     computed_mesh: Mesh,
     outline_mesh: Mesh,
     time: f32,
-    program: Option<Shader>,
-    outline_program: Option<Shader>,
+    program: Option<Program>,
+    outline_program: Option<Program>,
     view: Matrix4<f32>,
     projection: Matrix4<f32>,
     ambient_light: AmbientLight,
@@ -35,8 +35,8 @@ pub struct TestApplication {
 
 impl Application for TestApplication {
     fn start(&mut self) -> Result<(), JsValue> {
-        self.program = self.render.create_shader(SHADER_SIMPLE_VERT, SHADER_SIMPLE_FRAG).ok();
-        self.outline_program = self.render.create_shader(SHADER_SIMPLE_VERT, SHADER_FLATCOLOR_FRAG).ok();
+        self.program = self.render.create_program("simple.vert", "simple.frag").ok();
+        self.outline_program = self.render.create_program("simple.vert", "flatcolor.frag").ok();
 
         if self.program.is_none() || self.outline_program.is_none() {
             console_log!("Failed to compile shaders!");
@@ -128,7 +128,7 @@ impl Application for TestApplication {
         let mvp = self.projection * self.view * model;
 
         // Render mesh
-        self.render.set_shader(self.program.as_ref());
+        self.render.set_program(self.program.as_ref());
         self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
         self.program.as_ref().unwrap().set_uniform_matrix4f("normalMatrix", model.transpose().try_inverse().unwrap_or(Matrix4::identity()));
         self.program.as_ref().unwrap().set_uniform1f("time", self.time);
@@ -138,7 +138,7 @@ impl Application for TestApplication {
         self.render.draw_mesh(&self.computed_mesh);
 
         // Render the outline
-        self.render.set_shader(self.outline_program.as_ref());
+        self.render.set_program(self.outline_program.as_ref());
         self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
         self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.851, 0.149, 0.663, 1.0));
         self.render.draw_mesh(&self.outline_mesh);
