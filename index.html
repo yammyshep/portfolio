@@ -14,17 +14,17 @@
       <div class="card bg-base-300/50 backdrop-blur-sm shadow-xl">
         <div class="card-body">
           <div class="avatar self-center w-64 mb-5 md:w-full lg:w-64">
-            <img class="mask mask-squircle" src="/img/avatar.jpg" alt="Avatar">
+            <img class="mask mask-squircle" src="/img/avatar.webp" alt="Avatar">
           </div>
           <h1 class="card-title justify-center text-primary text-3xl">Jacob Buelow</h1>
           <h3 class="text-center text-primary-content text-sm">Computer Scientist & Game Developer</h3>
           <div class="card-actions justify-center m-2">
             <div class="badge badge-primary">He/They</div>
-            <div class="badge badge-secondary">UW-Stout Senior</div>
+            <div class="badge badge-secondary">UW-Stout Student</div>
             <!--<div class="badge badge-accent">Another Badge</div>-->
           </div>
           <p class="mt-2">
-            Senior at University of Wisconsin - Stout studying Computer Science and Game Design.
+            Student at University of Wisconsin-Stout studying Computer Science and Game Design.
           </p>
           <div class="grid grid-flow-row mt-5 gap-x-4 gap-y-4 grid-cols-2 lg:grid-cols-2">
             <a role="button" class="btn btn-outline btn-secondary gap-2" href="https://github.com/yammyshep">
@@ -35,7 +35,7 @@
               <img class="h-6" src="/img/linkedin-mark.svg" alt="">
               LinkedIn
             </a>
-            <a role="button" class="btn btn-outline btn-secondary gap-2" href="/file/Resume_Jacob-Buelow_FA23.pdf">
+            <a role="button" class="btn btn-outline btn-secondary gap-2" href="/file/Resume_Jacob-Buelow.pdf">
               <img class="h-6" src="/img/document-icon.svg" alt="">
               Resume
             </a>
@@ -52,10 +52,102 @@
       </div>
     </div>
     <div class="md:float-right md:w-2/3 md:h-screen p-1 md:p-8 md:pl-0 mt-4 md:mt-0 space-y-4 md:overflow-auto">
-      <!--<div class="rounded-2xl p-4 bg-base-300/50 backdrop-blur-sm text-center">
-        <h1 class="font-medium text-3xl">Heading 1</h1>
-        <p>Paragraph text</p>
-      </div>-->
+      <div class="w-full grid place-items-center">
+        <div class="rounded-2xl p-4 w-1/2 bg-base-300/50 backdrop-blur-sm text-center">
+          <h1 class="font-medium text-3xl">Projects and Games</h1>
+        </div>
+      </div>
+      <div class="collapse collapse-arrow bg-base-300/50 backdrop-blur-sm">
+        <input type="radio" name="project-accordian" />
+        <div class="collapse-title p-0 h-32 overflow-hidden flex">
+          <img class="h-full" src="/img/landoflights/landoflights-promo.webp" alt="Land of Lights logo">
+          <div class="p-0 m-4 mr-12 min-w-0 flex flex-col justify-center lg:justify-start">
+            <h2 class="text-3xl font-medium">Land of Lights</h2>
+            <p class="mt-2 hidden lg:inline min-h-0 truncate">
+              Use your wit and Guppy’s ability to unravel the mystery of the spreading disease and restore this once beautiful island!
+            </p>
+          </div>
+        </div>
+        <div class="bg-base-300/50 collapse-content">
+          <p class="mt-4">
+            Land of Lights was developed as a Game Design and Development Senior Capstone project at University of Wisconsin-Stout.<br>
+            Developed by Jacob Buelow, Rachel Bagley, Connor Born, Atlas Collins, Elliot Duffy, Lizze Garretson, Eric Hagar, Hunter Hintz,
+            Emiliy Inman, Camile Lemm, Jacob Libertoski, Casey O'Grady, Silver Ortel and Howie Ramaley.
+            <br>
+            Music by Kaylin Frisaura and Andy Lin from Berklee College of Music.
+          </p>
+          <script src="https://player.vimeo.com/api/player.js"></script>
+          <div class="carousel w-full mt-4 mb-4">
+            <div id="landoflights-screenshot-slide1" class="carousel-item relative w-full">
+              <div>
+                <iframe src="https://player.vimeo.com/video/941320251?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Land of Lights Release Trailer">
+                </iframe>
+              </div>
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide2" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="landoflights-screenshot-slide2" class="carousel-item relative w-full">
+              <img
+                src="/img/landoflights/landoflights-screenshot-1.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide1" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide3" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="landoflights-screenshot-slide3" class="carousel-item relative w-full">
+              <img
+                src="/img/landoflights/landoflights-screenshot-2.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide2" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide4" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="landoflights-screenshot-slide4" class="carousel-item relative w-full">
+              <img
+                src="/img/landoflights/landoflights-screenshot-3.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide3" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide5" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="landoflights-screenshot-slide5" class="carousel-item relative w-full">
+              <img
+                src="/img/landoflights/landoflights-screenshot-4.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide6" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="landoflights-screenshot-slide6" class="carousel-item relative w-full">
+              <img
+                src="/img/landoflights/landoflights-screenshot-5.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#landoflights-screenshot-slide5" class="btn btn-circle">❮</a>
+                <a href="#landoflights-screenshot-slide1" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+          </div>
+          <p>
+          </p>
+          <div class="mt-8 space-x-3">
+            <a class="btn btn-outline btn-secondary gap-2" href="https://luminous-games.itch.io/land-of-lights">
+              <img class="h-6" src="/img/itchio-mark.svg" alt="itch.io logo">
+              Play on itch.io
+            </a>
+            <a class="btn btn-outline btn-secondary gap-2" href="https://landoflightsgame.com">
+              <img class="h-6" src="/img/landoflights/landoflights-logo.webp" alt="Land of Lights Logo">
+              Project Website & Blog
+            </a>
+          </div>
+        </div>
+      </div>
       <div class="collapse collapse-arrow bg-base-300/50 backdrop-blur-sm">
         <input type="radio" name="project-accordian" />
         <div class="collapse-title p-0 h-32 overflow-hidden flex">
@@ -98,7 +190,7 @@
       <div class="collapse collapse-arrow bg-base-300/50 backdrop-blur-sm">
         <input type="radio" name="project-accordian" />
         <div class="collapse-title p-0 h-32 overflow-hidden flex">
-          <img class="h-full" src="/img/comboarena/comboarena-logo.png" alt="Combo Arena logo">
+          <img class="h-full" src="/img/comboarena/comboarena-logo.webp" alt="Combo Arena logo">
           <div class="p-0 m-4 mr-12 min-w-0 flex flex-col justify-center lg:justify-start">
             <h2 class="text-3xl font-medium">Combo Arena</h2>
             <p class="mt-2 hidden lg:inline min-h-0 truncate">
@@ -117,6 +209,8 @@
             combining them in unique and creative ways to create the perfect killing machine to fight off dangerous robots.
             With intuitive combat and randomized levels each run will be different.
           </p>
+          <br>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/syG2s-LqkW4?si=tf4Bbi2aowshSYHg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           <div class="mt-8 space-x-3">
             <a class="btn btn-outline btn-secondary gap-2" href="https://cyborg-hunter20.itch.io/combo-arena">
               <img class="h-6" src="/img/itchio-mark.svg" alt="itch.io logo">
@@ -128,7 +222,7 @@
       <div class="collapse collapse-arrow bg-base-300/50 backdrop-blur-sm">
         <input type="radio" name="project-accordian" />
         <div class="collapse-title p-0 h-32 overflow-hidden flex">
-          <img class="h-full" src="/img/cenote/cenote-logo.png" alt="Cenote logo">
+          <img class="h-full" src="/img/cenote/cenote-logo.webp" alt="Cenote logo">
           <div class="p-0 m-4 mr-12 min-w-0 flex flex-col justify-center lg:justify-start">
             <h2 class="text-3xl font-medium">Cenóte</h2>
             <p class="mt-2 hidden lg:inline min-h-0 truncate">
@@ -141,7 +235,64 @@
           <p class="mt-4">
             Cenóte was developed for the Spring 2023 IGDA 48 hour game jam by
             Jacob Buelow, Sam Baeseman, Dorian Blossom, Elizabeth Geoffery, Gavin Hefty, and Cole Nugteren.
-            <br><br>
+          </p>
+          <div class="carousel w-full mt-4 mb-4">
+            <div id="cenote-screenshot-slide1" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-1.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide2" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="cenote-screenshot-slide2" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-2.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide1" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide3" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="cenote-screenshot-slide3" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-3.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide2" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide4" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="cenote-screenshot-slide4" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-4.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide3" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide5" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="cenote-screenshot-slide5" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-5.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide6" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="cenote-screenshot-slide6" class="carousel-item relative w-full">
+              <img
+                src="/img/cenote/cenote-screenshot-6.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#cenote-screenshot-slide5" class="btn btn-circle">❮</a>
+                <a href="#cenote-screenshot-slide1" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+          </div>
+          <P>
             In Cenóte, you play as Finley, an amphibious monkey that has the power to absorb water in their environment to grow in size, and shrink in size by standing on dry land for a while.
             While on land, Finley can solve puzzles by collecting isopods and bringing them to pitcher plants. In the waters, Finley is able to grab a tasty fish snack.
           </p>
@@ -156,7 +307,7 @@
       <div class="collapse collapse-arrow bg-base-300/50 backdrop-blur-sm">
         <input type="radio" name="project-accordian" />
         <div class="collapse-title p-0 h-32 overflow-hidden flex">
-          <img class="h-full" src="/img/starlight/starlight_630x500.png" alt="Starlight Postal promotional artwork">
+          <img class="h-full" src="/img/starlight/starlight-promo.webp" alt="Starlight Postal promotional artwork">
           <div class="p-0 m-4 mr-12 min-w-0 flex flex-col justify-center lg:justify-start">
             <h2 class="text-3xl font-medium">Starlight Postal</h2>
             <p class="mt-2 hidden lg:inline min-h-0 truncate">
@@ -170,7 +321,64 @@
             Co-developed with
             Dorian Blossom, Augusto Freitas, Andrew Holthusen, Cole Nugteren and Issac Tesch.<br>
             Music by Mitchell Von Eschen.
-            <br><br>
+          </p>
+          <div class="carousel w-full mt-4 mb-4">
+            <div id="starlight-screenshot-slide1" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-1.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide2" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="starlight-screenshot-slide2" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-2.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide1" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide3" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="starlight-screenshot-slide3" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-3.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide2" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide4" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="starlight-screenshot-slide4" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-4.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide3" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide5" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="starlight-screenshot-slide5" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-5.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide4" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide6" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+            <div id="starlight-screenshot-slide6" class="carousel-item relative w-full">
+              <img
+                src="/img/starlight/starlight-screenshot-6.webp"
+                class="w-full" />
+              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#starlight-screenshot-slide5" class="btn btn-circle">❮</a>
+                <a href="#starlight-screenshot-slide1" class="btn btn-circle">❯</a>
+              </div>
+            </div>
+          </div>
+          <p>
             Starlight Postal is a 2D hot air balloon piloting simulator, set in the mountaintops where the usual
             ground postal service cannot reach. Following the wind and avoiding the ground and deadly spikes,
             you alone must deliver mail to all of the mountaintop villages.

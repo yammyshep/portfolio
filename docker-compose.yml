@@ -1,0 +1,19 @@
+services:
+  dev:
+    build: .
+    profiles:
+      - ''
+    ports:
+      - "5173:5173"
+    entrypoint: sh -c "npm ci && npm run rsw build && npm run dev"
+    working_dir: /src
+    volumes:
+      - ./:/src
+  build:
+    build: .
+    profiles:
+      - 'build'
+    entrypoint: sh -c "npm ci && npm run build"
+    working_dir: /src
+    volumes:
+      - ./:/src

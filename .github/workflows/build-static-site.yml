@@ -11,10 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag webgltest-env
     - name: Build static site
-      run: docker run --workdir /src -v $(pwd):/src webgltest-env sh -c "npm ci && npm run build"
+      run: docker compose --profile build up --build
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:

@@ -89,8 +89,8 @@ RUN set -eux; \
     cargo --version; \
     rustc --version;
 
-RUN cargo install --version 0.12.1 wasm-pack && \
-    cargo install --version 0.8.0 rsw
+RUN cargo install --locked --version 0.12.1 wasm-pack && \
+    cargo install --locked --version 0.8.0 rsw
 
 EXPOSE 5173
 
