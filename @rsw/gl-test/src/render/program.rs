@@ -3,8 +3,8 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
 
-use crate::shader::ShaderErr;
-use crate::shader::shader::Shader;
+use crate::render::ShaderErr;
+use crate::render::shader::Shader;
 
 pub struct Program {
     pub wgl_program: WebGlProgram,

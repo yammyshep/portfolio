@@ -7,8 +7,8 @@ use noise::{NoiseFn, Perlin, Seedable};
 
 use crate::app::Application;
 use crate::render::{Renderer, GlRenderer, mesh::Mesh, light::AmbientLight, light::DirectionalLight};
-use crate::shader::shader::Shader;
-use crate::shader::program::Program;
+use crate::render::shader::Shader;
+use crate::render::program::Program;
 
 #[wasm_bindgen]
 extern "C" {

@@ -2,7 +2,7 @@ use web_sys::*;
 use include_dir::{include_dir, Dir};
 use std::collections::HashMap;
 
-use crate::shader::ShaderErr;
+use crate::render::ShaderErr;
 
 static SHADERS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/shaders");
 

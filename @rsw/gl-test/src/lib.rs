@@ -6,7 +6,6 @@ use web_sys::WebGlRenderingContext;
 
 mod app;
 mod render;
-mod shader;
 
 use app::*;
 use render::*;

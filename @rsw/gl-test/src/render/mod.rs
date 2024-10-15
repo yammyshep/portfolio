@@ -2,12 +2,24 @@ use web_sys::{WebGlRenderingContext, WebGlBuffer};
 use wasm_bindgen::prelude::*;
 use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
 
-use crate::shader::shader::Shader;
-use crate::shader::program::Program;
 use crate::Mesh;
 
 pub mod mesh;
 pub mod light;
+pub mod shader;
+pub mod program;
+
+use program::Program;
+use shader::Shader;
+
+pub enum ShaderErr {
+    FileNotFound,
+    ShaderCreateErr,
+    ProgramCreateErr,
+    CompileErr,
+    LinkErr,
+    UnknownError,
+}
 
 #[wasm_bindgen]
 extern "C" {
