@@ -1,10 +1,18 @@
 use web_sys::*;
 use include_dir::{include_dir, Dir};
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
 
 use crate::render::ShaderErr;
-
 static SHADERS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/shaders");
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+macro_rules! console_log { ($($t:tt)*) => (log(&format!("[shader] {}", &format_args!($($t)*)).to_string())) }
 
 pub struct Shader {
     name: String,
@@ -31,7 +39,8 @@ impl Shader {
         self.wgl_shader = Some(self.gl.create_shader(self.shader_type).ok_or(ShaderErr::ShaderCreateErr)?);
         let shader = self.wgl_shader.as_ref().unwrap();
 
-        let source = load_shader(&self.name, &HashMap::new())?;
+        let mut defines = HashMap::new();
+        let source = load_shader(&self.name, &mut defines)?;
 
         self.gl.shader_source(shader, &source);
         self.gl.compile_shader(shader);
@@ -49,25 +58,64 @@ impl Shader {
     }
 }
 
-fn load_shader(filename: &str, mut defines: &HashMap<String, String>) -> Result<String, ShaderErr> {
+fn load_shader(filename: &str, mut defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
     let source = SHADERS_DIR.get_file(filename).ok_or(ShaderErr::FileNotFound)?.contents_utf8().ok_or(ShaderErr::UnknownError)?;
     preprocess(source, defines)
 }
 
-fn preprocess(source: &str, mut defines: &HashMap<String, String>) -> Result<String, ShaderErr> {
+fn preprocess(source: &str, mut defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
     let mut source_out = String::new();
+    let mut if_stack: Vec<bool> = vec![];
     for line in source.lines() {
         let trim = line.trim();
+        
+        
+        if trim.starts_with("#ifdef") {
+            let define_name = trim.split_whitespace().skip(1).next()
+                .ok_or(ShaderErr::UnknownError)?.to_string();
+            if_stack.push(defines.contains_key(&define_name));
+            continue;
+        }
+
+        if trim.starts_with("#ifndef") {
+            let define_name = trim.split_whitespace().skip(1).next()
+                .ok_or(ShaderErr::UnknownError)?.to_string();
+            if_stack.push(!defines.contains_key(&define_name));
+            continue;
+        }
+
+        if trim.starts_with("#endif") {
+            if_stack.pop();
+            continue;
+        }
+
+        if trim.starts_with("#define") {
+            let define_name = trim.split_whitespace().skip(1).next()
+                .ok_or(ShaderErr::UnknownError)?.to_string();
+            let value = trim.split_whitespace().skip(2).next().unwrap_or("").to_string();
+            defines.insert(define_name, value);
+            continue;
+        }
+
+        if *if_stack.last().unwrap_or(&false) {
+            continue;
+        }
+
         if trim.starts_with("#include") {
             let mut filename = trim.split_whitespace().skip(1).next()
                 .ok_or(ShaderErr::UnknownError)?.to_string();
             filename.retain(|c| !r#""<>"#.contains(c));
 
-            source_out.push_str(&preprocess(&filename, defines)?);
-        } else {
-            source_out.push_str(line);
+            let include_src = SHADERS_DIR.get_file(filename).ok_or(ShaderErr::FileNotFound)?.contents_utf8().ok_or(ShaderErr::UnknownError)?;
+            source_out.push_str(&preprocess(include_src, defines)?);
+            continue;
         }
+
+        source_out.push_str(line);
         source_out.push_str("\n");
     }
+
+    //console_log!("Preprocessed shader source:\n{}", source_out);
+
     Ok(source_out)
 }
