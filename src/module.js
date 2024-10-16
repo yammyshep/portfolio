@@ -6,13 +6,14 @@ client.start();
 
 let time = Date.now();
 function render() {
-    const dt = Date.now() - time;
+    var newTime = Date.now()
+    const dt = newTime - time;
+    time = newTime;
 
     client.update(dt * 0.001);
     client.render();
 
     window.requestAnimationFrame(render);
-    time = Date.now();
 }
 
 render();
