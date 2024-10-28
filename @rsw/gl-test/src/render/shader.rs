@@ -89,15 +89,15 @@ fn preprocess(source: &str, mut defines: &mut HashMap<String, String>) -> Result
             continue;
         }
 
+        if !*if_stack.last().unwrap_or(&true) {
+            continue;
+        }
+
         if trim.starts_with("#define") {
             let define_name = trim.split_whitespace().skip(1).next()
                 .ok_or(ShaderErr::UnknownError)?.to_string();
             let value = trim.split_whitespace().skip(2).next().unwrap_or("").to_string();
             defines.insert(define_name, value);
-            continue;
-        }
-
-        if *if_stack.last().unwrap_or(&false) {
             continue;
         }
 

@@ -34,8 +34,8 @@ pub struct TestApplication {
 
 impl Application for TestApplication {
     fn start(&mut self) -> Result<(), JsValue> {
-        self.program = self.render.create_program("simple.vert", "simple.frag").ok();
-        self.outline_program = self.render.create_program("simple.vert", "flatcolor.frag").ok();
+        self.program = self.render.create_program("noiseanimation.vert", "simple.frag").ok();
+        self.outline_program = self.render.create_program("noiseanimation.vert", "flatcolor.frag").ok();
 
         if self.program.is_none() || self.outline_program.is_none() {
             console_log!("Failed to compile shaders!");
@@ -66,6 +66,9 @@ impl Application for TestApplication {
                 5
             )
         );
+
+        self.mesh.generate_normals();
+        self.mesh.update_buffers(&self.render);
 
         // Create wireframe mesh of lines
         self.outline_mesh = Mesh::new();
@@ -121,6 +124,7 @@ impl Application for TestApplication {
         // Render the outline
         self.render.set_program(self.outline_program.as_ref());
         self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
+        self.outline_program.as_ref().unwrap().set_uniform1f("time", self.time);
         self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.851, 0.149, 0.663, 1.0));
         self.render.draw_mesh(&self.outline_mesh);
     }
