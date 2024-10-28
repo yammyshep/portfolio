@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
 use crate::render::ShaderErr;
-static SHADERS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/shaders");
+static SHADERS_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/src/shaders");
 
 #[wasm_bindgen]
 extern "C" {

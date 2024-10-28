@@ -21,7 +21,6 @@ macro_rules! console_log { ($($t:tt)*) => (log(&format!("[test_app] {}", &format
 pub struct TestApplication {
     render: GlRenderer,
     mesh: Mesh,
-    computed_mesh: Mesh,
     outline_mesh: Mesh,
     time: f32,
     program: Option<Program>,
@@ -43,7 +42,7 @@ impl Application for TestApplication {
             panic!();
         }
 
-        console_log!("Shader compiled!");
+        console_log!("Shaders compiled!");
 
         self.render.enable_depth_test();
 
@@ -68,6 +67,16 @@ impl Application for TestApplication {
             )
         );
 
+        // Create wireframe mesh of lines
+        self.outline_mesh = Mesh::new();
+        let v = self.mesh.get_verticies();
+        for i in (0..self.mesh.len()).step_by(3) {
+            let o = vector!(0.0, 0.0, 0.00005);
+            self.outline_mesh.add_verticies(vec!(v[i]+o, v[i + 1]+o, v[i + 1]+o, v[i + 2]+o));
+        }
+        self.outline_mesh.draw_mode = WebGlRenderingContext::LINES;
+        self.outline_mesh.update_buffers(&self.render);
+
         //self.mesh.update_buffers(&self.render);
         console_log!("Application started.");
         Ok(())
@@ -76,34 +85,6 @@ impl Application for TestApplication {
     fn update(&mut self, dt: f32) {
         self.time += dt;
         self.projection = Matrix4::new_perspective(self.render.aspect(), 70.0, 0.01, 100.0);
-
-        
-        self.computed_mesh = Mesh::new();
-        for vert in self.mesh.get_verticies() {
-            let noise_in = (vert * 7.5) + vector!(128.0, 128.0, 0.0);
-
-            let noise_out: Vector3<f32> = Vector3::new(0.0, 0.0,
-                0.1 * self.perlin.get([noise_in.x as f64, noise_in.y as f64, (self.time * 0.5) as f64]) as f32,
-            );
-
-            self.computed_mesh.add_vertex(vert + noise_out);
-            self.computed_mesh.add_color(vector!(0.114, 0.137, 0.165, 1.0));
-        }
-
-        self.computed_mesh.use_colors = true;
-
-        self.computed_mesh.generate_normals();
-        self.computed_mesh.update_buffers(&self.render);
-
-        // Create wireframe mesh of lines
-        self.outline_mesh = Mesh::new();
-        let v = self.computed_mesh.get_verticies();
-        for i in (0..self.computed_mesh.len()).step_by(3) {
-            let o = vector!(0.0, 0.0, 0.00005);
-            self.outline_mesh.add_verticies(vec!(v[i]+o, v[i + 1]+o, v[i + 1]+o, v[i + 2]+o));
-        }
-        self.outline_mesh.draw_mode = WebGlRenderingContext::LINES;
-        self.outline_mesh.update_buffers(&self.render);
     }
 
     fn render(&self) {
@@ -135,7 +116,7 @@ impl Application for TestApplication {
         self.program.as_ref().unwrap().set_uniform4f("ambientLightColor", self.ambient_light.color.push(self.ambient_light.intensity));
         self.program.as_ref().unwrap().set_uniform4f("directionalLightColor", self.dir_light.color.push(self.dir_light.intensity));
         self.program.as_ref().unwrap().set_uniform3f("directionalLightDir", self.dir_light.direction);
-        self.render.draw_mesh(&self.computed_mesh);
+        self.render.draw_mesh(&self.mesh);
 
         // Render the outline
         self.render.set_program(self.outline_program.as_ref());
@@ -159,7 +140,6 @@ impl TestApplication {
         Ok(TestApplication {
             render,
             mesh: Mesh::new(),
-            computed_mesh: Mesh::new(),
             outline_mesh: Mesh::new(),
             program: None,
             outline_program: None,
