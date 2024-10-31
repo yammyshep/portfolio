@@ -1,4 +1,3 @@
-use web_sys::WebGlRenderingContext;
 use crate::render::Renderer;
 use wasm_bindgen::JsValue;
 

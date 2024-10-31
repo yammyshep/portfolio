@@ -1,6 +1,6 @@
 use web_sys::{WebGlRenderingContext, WebGlBuffer};
 use wasm_bindgen::prelude::*;
-use nalgebra::{ Vector1, Vector2, Vector3, Vector4, Matrix2, Matrix3, Matrix4 };
+use nalgebra::Vector4;
 
 use crate::Mesh;
 
@@ -66,7 +66,7 @@ impl Renderer for GlRenderer {
         vert.compile().or(Err(()))?;
         frag.compile().or(Err(()))?;
 
-        program.link(&vert, &frag).or(Err(()));
+        program.link(&vert, &frag).or(Err(()))?;
         Ok(program)
     }
 
@@ -85,7 +85,7 @@ impl Renderer for GlRenderer {
         self.gl.enable_vertex_attrib_array(POSITION_ATTRIBUTE);
         self.gl.vertex_attrib_pointer_with_i32(POSITION_ATTRIBUTE, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
 
-        if (mesh.using_normals()) {
+        if mesh.using_normals() {
             self.gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, mesh.get_normal_buffer());
             self.gl.enable_vertex_attrib_array(NORMAL_ATTRIBUTE);
             self.gl.vertex_attrib_pointer_with_i32(NORMAL_ATTRIBUTE, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
@@ -93,7 +93,7 @@ impl Renderer for GlRenderer {
             self.gl.disable_vertex_attrib_array(NORMAL_ATTRIBUTE);
         }
 
-        if (mesh.using_colors()) {
+        if mesh.using_colors() {
             self.gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, mesh.get_colors_buffer());
             self.gl.enable_vertex_attrib_array(COLOR_ATTRIBUTE);
             self.gl.vertex_attrib_pointer_with_i32(COLOR_ATTRIBUTE, 4, WebGlRenderingContext::FLOAT, false, 0, 0);
@@ -101,7 +101,7 @@ impl Renderer for GlRenderer {
             self.gl.disable_vertex_attrib_array(COLOR_ATTRIBUTE);
         }
 
-        if (mesh.using_texcoords()) {
+        if mesh.using_texcoords() {
             self.gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, mesh.get_texcoord_buffer());
             self.gl.enable_vertex_attrib_array(TEXCOORD_ATTRIBUTE);
             self.gl.vertex_attrib_pointer_with_i32(TEXCOORD_ATTRIBUTE, 2, WebGlRenderingContext::FLOAT, false, 0, 0);

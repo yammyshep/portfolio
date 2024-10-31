@@ -10,8 +10,6 @@ extern "C" {
     fn log(s: &str);
 }
 
-macro_rules! console_log { ($($t:tt)*) => (log(&format_args!($($t)*).to_string())) }
-
 pub type Mesh = MeshGen<Vector3<f32>, Vector3<f32>, Vector4<f32>, Vector2<f32>>;
 
 #[derive(Debug)]
@@ -152,6 +150,7 @@ impl Mesh {
         }
     }
 
+    //TODO: This file needs to work independently of any WebGl types. Move this function to the renderer.
     fn bind_array_to_buffer(&self, array: &Float32Array, buffer: &Option<WebGlBuffer>, render: &dyn Renderer) {
         let gl = render.get_gl().unwrap();
         gl.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, buffer.as_ref());

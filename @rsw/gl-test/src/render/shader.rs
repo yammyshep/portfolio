@@ -58,12 +58,12 @@ impl Shader {
     }
 }
 
-fn load_shader(filename: &str, mut defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
+fn load_shader(filename: &str, defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
     let source = SHADERS_DIR.get_file(filename).ok_or(ShaderErr::FileNotFound)?.contents_utf8().ok_or(ShaderErr::UnknownError)?;
     preprocess(source, defines)
 }
 
-fn preprocess(source: &str, mut defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
+fn preprocess(source: &str, defines: &mut HashMap<String, String>) -> Result<String, ShaderErr> {
     let mut source_out = String::new();
     let mut if_stack: Vec<bool> = vec![];
     for line in source.lines() {
@@ -115,7 +115,8 @@ fn preprocess(source: &str, mut defines: &mut HashMap<String, String>) -> Result
         source_out.push_str("\n");
     }
 
-    //console_log!("Preprocessed shader source:\n{}", source_out);
+    #[cfg(debug_assertions)]
+    console_log!("Preprocessed shader source:\n{}", source_out);
 
     Ok(source_out)
 }

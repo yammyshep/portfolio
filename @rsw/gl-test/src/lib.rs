@@ -2,15 +2,12 @@
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::WebGlRenderingContext;
 
 mod app;
 mod render;
 
 use app::*;
-use render::*;
 use render::mesh::Mesh;
-use nalgebra::vector;
 
 mod test_app;
 use test_app::TestApplication;

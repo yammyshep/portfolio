@@ -1,13 +1,10 @@
 use web_sys::{WebGlRenderingContext, HtmlCanvasElement};
-use nalgebra::vector;
 use nalgebra::*;
-use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::{JsValue};
 use wasm_bindgen::prelude::*;
-use noise::{NoiseFn, Perlin, Seedable};
 
 use crate::app::Application;
 use crate::render::{Renderer, GlRenderer, mesh::Mesh, light::AmbientLight, light::DirectionalLight};
-use crate::render::shader::Shader;
 use crate::render::program::Program;
 
 #[wasm_bindgen]
@@ -29,7 +26,6 @@ pub struct TestApplication {
     projection: Matrix4<f32>,
     ambient_light: AmbientLight,
     dir_light: DirectionalLight,
-    perlin: Perlin,
 }
 
 impl Application for TestApplication {
@@ -105,7 +101,7 @@ impl Application for TestApplication {
 
         // This is probably over-correcting but I do not care :)
         let over_angle = angle - (60.0 * (std::f32::consts::PI / 180.0));
-        if (over_angle >= 0.0) {
+        if over_angle >= 0.0 {
             model = model * Matrix4::new_scaling(1.0 + over_angle);
         }
         
@@ -113,19 +109,19 @@ impl Application for TestApplication {
 
         // Render mesh
         self.render.set_program(self.program.as_ref());
-        self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
-        self.program.as_ref().unwrap().set_uniform_matrix4f("normalMatrix", model.transpose().try_inverse().unwrap_or(Matrix4::identity()));
-        self.program.as_ref().unwrap().set_uniform1f("time", self.time);
-        self.program.as_ref().unwrap().set_uniform4f("ambientLightColor", self.ambient_light.color.push(self.ambient_light.intensity));
-        self.program.as_ref().unwrap().set_uniform4f("directionalLightColor", self.dir_light.color.push(self.dir_light.intensity));
-        self.program.as_ref().unwrap().set_uniform3f("directionalLightDir", self.dir_light.direction);
+        self.program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp).unwrap();
+        self.program.as_ref().unwrap().set_uniform_matrix4f("normalMatrix", model.transpose().try_inverse().unwrap_or(Matrix4::identity())).unwrap();
+        self.program.as_ref().unwrap().set_uniform1f("time", self.time).unwrap();
+        self.program.as_ref().unwrap().set_uniform4f("ambientLightColor", self.ambient_light.color.push(self.ambient_light.intensity)).unwrap();
+        self.program.as_ref().unwrap().set_uniform4f("directionalLightColor", self.dir_light.color.push(self.dir_light.intensity)).unwrap();
+        self.program.as_ref().unwrap().set_uniform3f("directionalLightDir", self.dir_light.direction).unwrap();
         self.render.draw_mesh(&self.mesh);
 
         // Render the outline
         self.render.set_program(self.outline_program.as_ref());
-        self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp);
-        self.outline_program.as_ref().unwrap().set_uniform1f("time", self.time);
-        self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.851, 0.149, 0.663, 1.0));
+        self.outline_program.as_ref().unwrap().set_uniform_matrix4f("mvp", mvp).unwrap();
+        self.outline_program.as_ref().unwrap().set_uniform1f("time", self.time).unwrap();
+        self.outline_program.as_ref().unwrap().set_uniform4f("flatColor", vector!(0.851, 0.149, 0.663, 1.0)).unwrap();
         self.render.draw_mesh(&self.outline_mesh);
     }
 
@@ -159,7 +155,6 @@ impl TestApplication {
                 intensity: 0.66,
                 direction: vector!(1.0, 1.0, 1.0).normalize(),
             },
-            perlin: Perlin::new(3),
         })
     }
 }
@@ -168,11 +163,11 @@ fn recursive_subdivide(a: Vector3<f32>, b: Vector3<f32>, c: Vector3<f32>, iterat
     let mut divisions = subdivide_trig(a, b, c);
 
     if iterations > 2 {
-        let mut divOut: Vec<Vector3<f32>> = Vec::new();
+        let mut div_out: Vec<Vector3<f32>> = Vec::new();
         for i in 0..4 {
-            divOut.append(&mut recursive_subdivide(divisions[i*3], divisions[(i*3)+1], divisions[(i*3)+2], iterations - 1));
+            div_out.append(&mut recursive_subdivide(divisions[i*3], divisions[(i*3)+1], divisions[(i*3)+2], iterations - 1));
         }
-        divisions = divOut;
+        divisions = div_out;
     }
 
     divisions
