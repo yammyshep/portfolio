@@ -14,9 +14,9 @@ jobs:
       actions: read
     steps:
       - name: Download Artifact
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v11
         with:
-          run-id: ${{ github.event.workflow_run.id }}
+          run_id: ${{ github.event.workflow_run.id }}
           name: static-site
           path: dist
       - name: Upload static site to server
