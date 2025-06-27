@@ -29,6 +29,6 @@ jobs:
           proxy_username: ${{ secrets.DEPLOY_PROXY_USERNAME }}
           proxy_key: ${{ secrets.DEPLOY_PROXY_KEY }}
           source: dist/*
-          target: /var/www/jbuelow.com/
+          target: /srv/jbuelow-com/
           strip_components: 1
           overwrite: true
