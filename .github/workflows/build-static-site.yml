@@ -14,7 +14,7 @@ jobs:
     - name: Build static site
       run: docker compose --profile build up --build
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: static-site
         path: dist/
