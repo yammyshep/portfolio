@@ -20,7 +20,7 @@ jobs:
           name: static-site
           path: dist
       - name: Upload static site to server
-        uses: appleboy/scp-action@v0.1.4
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
@@ -32,3 +32,5 @@ jobs:
           target: /srv/jbuelow-com/
           strip_components: 1
           overwrite: true
+          capture_stdout: true
+          debug: true
