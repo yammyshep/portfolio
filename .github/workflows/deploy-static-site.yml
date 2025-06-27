@@ -16,7 +16,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          run_id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ github.event.workflow_run.id }}
           name: static-site
           path: dist
       - name: Upload static site to server
